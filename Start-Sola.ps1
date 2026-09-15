@@ -3,6 +3,7 @@ $root='D:\MateEngine-Sola'
 $exe=Join-Path $root 'app\MateEngineX.exe'
 if(!(Test-Path -LiteralPath $exe)){throw 'Mate Engine was not found in D:\MateEngine-Sola'}
 $running=Get-Process MateEngineX -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq $exe -or $_.Path -eq 'D:\桌宠\MateEngine-Sola\app\MateEngineX.exe' }
+& (Join-Path $root 'scripts\Start-Voice.ps1')
 if($running){exit 0}
 $cache=Join-Path $root 'userdata\Temp'
 New-Item -ItemType Directory -Path $cache -Force | Out-Null

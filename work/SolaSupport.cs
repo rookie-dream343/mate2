@@ -23,6 +23,7 @@ public class SolaSupport : MonoBehaviour {
   void Awake(){try{lastId=(string)JObject.Parse(File.ReadAllText(System.IO.Path.Combine(Work,"command.json")))["id"];}catch{}}
   void Start(){
     SolaDisplay.Attach();
+    SolaVoice.Attach();
     foreach(var character in All<LLMUnity.LLMCharacter>()){
       if(String.IsNullOrWhiteSpace(character.playerName))character.playerName="user";
       if(String.IsNullOrWhiteSpace(character.AIName))character.AIName="assistant";
@@ -64,6 +65,11 @@ public class SolaSupport : MonoBehaviour {
       yield return new WaitForEndOfFrame();
       var target=System.IO.Path.Combine(Work,(string)c["filename"]??"runtime.png");
       var tex=new Texture2D(Screen.width,Screen.height,TextureFormat.RGBA32,false);tex.ReadPixels(new Rect(0,0,Screen.width,Screen.height),0,0);tex.Apply();File.WriteAllBytes(target,tex.EncodeToPNG());Destroy(tex);value=target;
+    } else if(op=="renderui"){
+      yield return new WaitForEndOfFrame();var cam=Camera.main;var oldTarget=cam.targetTexture;var oldActive=RenderTexture.active;
+      var target=new RenderTexture(Screen.width,Screen.height,24,RenderTextureFormat.ARGB32);cam.targetTexture=target;cam.Render();RenderTexture.active=target;
+      var tex=new Texture2D(Screen.width,Screen.height,TextureFormat.RGBA32,false);tex.ReadPixels(new Rect(0,0,Screen.width,Screen.height),0,0);tex.Apply();
+      value=System.IO.Path.Combine(Work,(string)c["filename"]??"voice-ui.png");File.WriteAllBytes((string)value,tex.EncodeToPNG());cam.targetTexture=oldTarget;RenderTexture.active=oldActive;Destroy(tex);target.Release();Destroy(target);
     } else if(op=="portrait"){
       yield return new WaitForEndOfFrame();
       var cam=Camera.main;var avatar=All<Animator>().First(a=>a.isHuman&&a.gameObject.activeInHierarchy);
@@ -75,6 +81,7 @@ public class SolaSupport : MonoBehaviour {
       cam.targetTexture=oldTarget;cam.transform.position=oldPos;cam.orthographicSize=oldSize;RenderTexture.active=oldActive;Destroy(tex);target.Release();Destroy(target);
     } else try {
       if(op=="snapshot")value=Snapshot();
+      else if(op=="voice")value=SolaVoice.Instance.Status();
       else if(op=="display")value=SolaDisplay.Instance.Status();
       else if(op=="locale"){
         var init=UnityEngine.Localization.Settings.LocalizationSettings.InitializationOperation;

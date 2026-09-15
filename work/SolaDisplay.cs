@@ -33,7 +33,7 @@ public class SolaDisplay : MonoBehaviour {
   readonly Dictionary<Text,int> originalLegacyFonts=new Dictionary<Text,int>();
   readonly Dictionary<CanvasScaler,Vector2> originalReferences=new Dictionary<CanvasScaler,Vector2>();
   float saveAt,lastScreenHeight; bool needSave,initialized;
-  public static bool QuickMenuOpen(){return Instance&&Instance.panel&&Instance.panel.gameObject.activeInHierarchy;}
+  public static bool QuickMenuOpen(){return (Instance&&Instance.panel&&Instance.panel.gameObject.activeInHierarchy)||SolaVoice.MenuOpen();}
   public static bool ProperArmature(GameObject model){var a=model.GetComponentInChildren<Animator>();return a&&a.isHuman&&a.avatar&&a.avatar.isValid&&a.GetBoneTransform(HumanBodyBones.Hips);}
   public static void Attach(){if(Instance)return;Instance=new GameObject("Sola Display").AddComponent<SolaDisplay>();DontDestroyOnLoad(Instance.gameObject);}
   static IEnumerable<T> All<T>() where T:Component{return Resources.FindObjectsOfTypeAll<T>().Where(x=>x&&x.gameObject.scene.IsValid());}

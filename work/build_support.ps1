@@ -6,6 +6,7 @@ $argsList=@('/nostdlib+','/target:library','/langversion:latest',('/out:"'+(Join
 $argsList+=Get-ChildItem -LiteralPath $managed -Filter '*.dll' | Where-Object Name -ne 'SolaSupport.dll' | ForEach-Object {'/reference:"'+$_.FullName+'"'}
 $argsList+='"'+(Join-Path $PSScriptRoot 'SolaSupport.cs')+'"'
 $argsList+='"'+(Join-Path $PSScriptRoot 'SolaDisplay.cs')+'"'
+$argsList+='"'+(Join-Path $root 'voice\SolaVoice.cs')+'"'
 $argsList | Set-Content -LiteralPath $rsp -Encoding utf8
 & dotnet 'C:\Program Files\dotnet\sdk\10.0.300\Roslyn\bincore\csc.dll' ('@'+$rsp)
 if($LASTEXITCODE -ne 0){throw 'Support compile failed'}
